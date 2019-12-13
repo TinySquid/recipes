@@ -15,7 +15,8 @@ const knex = require('../../data/dbConfig');
 module.exports = {
   getRecipes,
   getShoppingList,
-  getInstructions
+  getInstructions,
+  getRecipesByIngredient
 };
 
 function getRecipes() {
@@ -36,4 +37,14 @@ function getInstructions(recipe_id) {
     .select("step_number", "step")
     .from("steps")
     .where({ recipe_id: recipe_id });
+}
+
+function getRecipesByIngredient(ingredient) {
+  return knex
+    .select("recipes.name", "recipes.prep_time", "recipes.cook_time", "recipes.servings")
+    .from("recipes")
+    .join("recipe_ingredients", "recipes.id", "=", "recipe_ingredients.recipe_id")
+    .join("ingredients", "recipe_ingredients.ingredient_id", "=", "ingredients.id")
+    .where("ingredients.name", "like", `%${ingredient}%`)
+    .first();
 }

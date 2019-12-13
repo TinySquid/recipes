@@ -48,4 +48,20 @@ router.get('/:id/instructions', (req, res) => {
     })
 });
 
+router.get('/search', (req, res) => {
+  const ingredient = req.query.ingredient;
+  // console.log(ingredient)
+  recipeDB.getRecipesByIngredient(ingredient)
+    .then(recipes => {
+      if (recipes) {
+        res.status(200).json(recipes);
+      } else {
+        res.status(404).json({ message: "No recipes found" });
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ message: "Error getting recipes", error: error });
+    })
+});
+
 module.exports = router;
