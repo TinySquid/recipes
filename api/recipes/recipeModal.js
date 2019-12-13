@@ -13,10 +13,27 @@ SELECT step_number, step FROM steps WHERE recipe_id = 1
 const knex = require('../../data/dbConfig');
 
 module.exports = {
-  getRecipes
+  getRecipes,
+  getShoppingList,
+  getInstructions
 };
 
 function getRecipes() {
   return knex("recipes")
     .select("name");
+}
+
+function getShoppingList(recipe_id) {
+  return knex
+    .select("name", "quantity", "measurement")
+    .from("recipe_ingredients")
+    .join("ingredients", "recipe_ingredients.ingredient_id", "=", "ingredients.id")
+    .where({ recipe_id: recipe_id });
+}
+
+function getInstructions(recipe_id) {
+  return knex
+    .select("step_number", "step")
+    .from("steps")
+    .where({ recipe_id: recipe_id });
 }
